@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+
+% Packages for math and formatting
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}  % For custom lists
+
+% Package for pseudocode
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+% Package for code
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily, breaklines=true}
+
+\usepackage{titlesec} 
+
+\titleformat{\subsection}[runin]
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\title{1. Introduction to Approximation Algorithm}
+\author{Bingyue Bei}
+\date{\today}
+\maketitle
+
+\section*{Exericse 1.1}
+\subsection*{i} \noindent
+For the maximization problem, we have definition: 
+\[
+\textsc{alg(I)} \geq \rho \cdot \textsc{opt(I)} \quad \forall \text { I} \text{ as input.}
+\]
+If $\rho > 1$, we have
+\[
+\textsc{alg(I)} \geq \rho \cdot \textsc{opt(I)} > \textsc{opt(I)},
+\]
+which contradicts the definition of an optimal solution.
+\subsection*{ii} \noindent
+For the minimization problem, we have definition: 
+\[
+\textsc{alg(I)} \leq \rho \cdot \textsc{opt(I)} \quad \forall \text { I} \text{ as input.}
+\]
+If $\rho < 1$, we have
+\[
+\textsc{alg(I)} \leq \rho \cdot \textsc{opt(I)} < \textsc{opt(I)},
+\]
+which contradicts the definition of an optimal solution.
+
+\section*{Exercise 1.2}
+We say that the approximation ratio $\rho$ is tight when:
+\[
+\rho = \inf_{I} \frac{\textsc{alg(I)}}{\textsc{opt(I)}}
+\]
+where the infimum is taken over all possible inputs $I$.
+
+\section*{Exercise 1.3}
+\subsection*{i} \noindent
+Consider the job array [80, 80, 40]. Note here that $\text{OPT(I)} = 80 + 40 = 120$.  
+The work distribution is:
+\begin{itemize}
+    \item Machine 1: [80, 40]
+    \item Machine 2: [80]
+\end{itemize}
+In this case, Alg returns the optimal result, 
+and is indeed a 1.05-approximation.
+
+\subsection*{ii} \noindent
+We started by building an intuition for the problem we are facing. 
+Since the tasks all have very small sizes, in the optimal case, they will be distributed evenly between the two machines, 
+returning a makespan which is approximately 100. So the result for a 1.05-approximation algorithm should be slightly above and very close to 105.
+\newline
+Here is a formal proof:  
+Since $t_1, t_2, \dots, t_n \leq 10$, let $M_{i}$ be the workload on machine $o_{1}$ and $M_{2}$ be the workload on machine $o_{2}$.
+We have $|M_{1} - M_{2}| \leq 20$ for an optimal solution. 
+\newline
+We proof this claim by constructing a proof by contradiction. Without loss of generality, assume $M_{1} \geq M_{2} + 20$. 
+Remove any task, represented by $t'$, from the workload of $M_{1}$, and added it into the workload of $M_{2}$. 
+The new workload for $o_{1}$, $M_{1}' = M_{1} - t' \geq M_{1} - 10$ since $t' \leq 10$. 
+The new workload for $o_{2}$, $M_{2}' = M_{2} + t' \leq M_{2} + 10$. Since $M_{1} \geq M_{2} + 20$, we have $M_{1} - 10 \geq M_{2} + 10$, 
+which is equivalent to $M_{1}' \geq M_{2}'$. The makespan have been reduced from $M_{1}$ to $M_{1}'$
+We thus created a new solution better than the previous one which claimed to be the optimal. 
+\newline
+Since $M_{1} + M_{2} = 200$, and $|M_{1} - M_{2}| \leq 20$. For an optimal solution, we have $M_{1}, M_{2} \leq \frac{200 + 20}{2} = 110$.
+So the optimal solution has an upper-bound of $110$, $\textsc{opt(I)} \leq 110$. 
+Our algorithm is an $1.05-\text{approximation}$, meaning $\textsc{alg(I)} \leq 1.05 \cdot \textsc{opt(I)} = 1.05 \cdot 110 = 115.5$. 
+\newline
+Professor's claim has to be false.
+
+\section*{Exercise 1.4}
+\subsection*{A} \noindent
+\subsection*{B} \noindent
+
+\section*{Exercise 1.5}
+\subsection*{i} \noindent
+Given the constraints of the problem we have:
+\[ 
+\sum_{j=1}^{n} t_{j} \geq 500, \quad t_{1}, t_{2}, ..., t_{n} \leq 25
+\]
+Let $M_{i}$ be the machine whose workload determines the makespan. 
+Consider the scheduling of its last job $j^{*}$ with time $t_{j^{*}}$. Before that job get scheduled, 
+the total processing time of all the job which has been scheduled, represented by $load(M_{i}^{*})$ is at least $475$.
+\[ load(M_{i}^{*}) = 
+\frac{1}{5}(\sum_{j=1}^{j < j^{*}} t_{j}) \geq \frac{1}{5}(\sum_{j=1}^{n} t_{j}- t_{j^{*}}) 
+\geq \frac{(500 - 25)}{5} = \frac{475}{5}
+\]
+
+Since that machine is where the last job is assigned to, workload of that machine has an upper-bound of $95 + 25 = 120$.
+
+\subsection*{ii} \noindent
+Considering the task array of [1, 1, ..., 1, 25], 
+
+\end{document}
