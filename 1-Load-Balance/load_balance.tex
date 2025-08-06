@@ -1,4 +1,5 @@
 \documentclass[11pt]{article}
+\usepackage[a4paper, margin=1in]{geometry} % Adjust margin size here
 
 % Packages for math and formatting
 \usepackage{amsmath, amssymb, amsthm}
@@ -24,7 +25,7 @@
 \date{\today}
 \maketitle
 
-\section*{Exericse 1.1}
+\section*{Exercise 1.1}
 \subsection*{i} \noindent
 For the maximization problem, we have definition: 
 \[
@@ -61,8 +62,8 @@ The work distribution is:
     \item Machine 1: [80, 40]
     \item Machine 2: [80]
 \end{itemize}
-In this case, Alg returns the optimal result, 
-and is indeed a 1.05-approximation.
+In this case, \textsc{alg(i)} returns the optimal result,
+and is 1.05-approximation.
 
 \subsection*{ii} \noindent
 We started by building an intuition for the problem we are facing. 
@@ -87,8 +88,34 @@ Our algorithm is an $1.05-\text{approximation}$, meaning $\textsc{alg(I)} \leq 1
 Professor's claim has to be false.
 
 \section*{Exercise 1.4}
-\subsection*{A} \noindent
-\subsection*{B} \noindent
+By definition of approximation algorithm, we have:
+\begin{itemize}
+  \item $ \textsc{opt(i)} \leq \textsc{alg1(i)} \leq 2 \cdot \textsc{opt(i)}$
+  \item $ \textsc{opt(i)} \leq \textsc{alg2(i)} \leq 4 \cdot \textsc{opt(i)}$
+\end{itemize}
+\subsection*{(a)} \noindent
+This statement is false.
+\newline 
+The problem only claim that $\textsc{alg2}$ is a 4-approximation algorithm. It does not mean the approximation ratio $4$ is tight. 
+It is possible that $\textsc{alg2}$ is the optimal solution itself, which also satisfy the quaternion for 4-approximation algorithm. 
+If that is the case, the fact that $\textsc{alg1}$ is a 2-approximation algorithm guarantees that there would be no solution satisfying 
+$\textsc{alg2(I)} = \textsc{opt(i)} \geq 2 \cdot \textsc{alg1(I)}$.
+\subsection*{(b)} \noindent
+This statement is true.
+\newline
+Proof by contradiction. Suppose we have $\textsc{alg1(i)} > 2 \cdot \textsc{alg2(i)}$. By definition for 4-approximation algorithm, we have 
+\[
+\textsc{alg1(i)} > 2 \cdot \textsc{alg2(i)} \geq 2 \cdot \textsc{opt(i)}
+\]
+Also using the definition for 2-approximation algorithm, we have
+\[
+\textsc{alg1(i)} \leq 2 \cdot \textsc{opt(i)}
+\]
+Combining the two inequalities, we have
+\[
+2 \cdot \textsc{opt(i)} \geq \textsc{alg1(i)} > 2 \cdot \textsc{alg2(i)} \geq 2 \cdot \textsc{opt(i)}
+\]
+which is a contradiction since the left most end and the right most end of the strict inequality represents the same value. 
 
 \section*{Exercise 1.5}
 \subsection*{i} \noindent
@@ -98,7 +125,9 @@ Given the constraints of the problem we have:
 \]
 Let $M_{i}$ be the machine whose workload determines the makespan. 
 Consider the scheduling of its last job $j^{*}$ with time $t_{j^{*}}$. Before that job get scheduled, 
-the total processing time of all the job which has been scheduled, represented by $load(M_{i}^{*})$ is at least $475$.
+the total processing time of all the job which has been scheduled is at least $475$.
+\newline
+Let $load(M_{i}^{*})$ represents the load of machine $M_{i}$ before its last job gets scheduled. 
 \[ load(M_{i}^{*}) = 
 \frac{1}{5}(\sum_{j=1}^{j < j^{*}} t_{j}) \geq \frac{1}{5}(\sum_{j=1}^{n} t_{j}- t_{j^{*}}) 
 \geq \frac{(500 - 25)}{5} = \frac{475}{5}
@@ -107,6 +136,171 @@ the total processing time of all the job which has been scheduled, represented b
 Since that machine is where the last job is assigned to, workload of that machine has an upper-bound of $95 + 25 = 120$.
 
 \subsection*{ii} \noindent
-Considering the task array of [1, 1, ..., 1, 25], 
+Considering the task array of [1, 1, ..., 1, 25], which is an array composed by $500 - 25 = 475$ of $1$'s and one $25$ 
+lingering at the end. Apply our greedy scheduling algorithm to this array. Before the last job with finish time $25$ is assigned, 
+the jobs with finishing time $1$ is distributed evenly between the five machines, which makes each of the five machine have a 
+total workload of $\frac{500 - 25}{5} = \frac{475}{5} = 95$, with its work stack looks like [1, 1, ..., 1](composed of all 1's).
+\newline
+The last job would be assigned to a machine with the least total workload. In this case, since all machine have the same workload, 
+which machine we assigned it to does not change the resulting makespan, which is $95 + 25 = 120$.
+\newline
+However, if we assigned the job with finish time 25 first to one of the machine, and then assign jobs with finish time 1 based on 
+greedy scheduling, we would have one machine with task stack that looks like [25, 1, 1, ..., 1] and the rest four machines with task 
+stack that looks like [1, 1, ..., 1], all of them have a total finish time of $\frac{500}{5} = 100$, which is also the optimal solution.
+\newline
+The ratio between optimal solution and the results given by greedy scheduling algorithm is $\frac{120}{100} = 1.2$. 
+\newline
+This case demonstrate perfectly what we have discussed in lecture that the pitfall of Greedy Scheduling is when we have a gigantic 
+job assigned at the end of the array, when each machine have similar total workload. That gigantic job would drastically increase the 
+resulting makespan. 
 
+\section*{Exercise 1.6}
+Constructing a worst case scenario using similar idea from the previous question. 
+Consider the input array [1, 1, ..., 1, m], which consists of $m * (m - 1)$ jobs of size 1 followed by a single job of size m. 
+The total workload of the array would be $m * (m - 1) * 1 + 1 * m = m * [(m - 1) + 1] = m * m = m ^ {2}$, being distributed into $m$ machines.
+\newline
+The optimal solution would be a makespan of m, which one machine being assigned a job of m, and all other machines being assigned $m$ jobs of size 1.
+\newline
+Now consider how the jobs would be distributed with \textit{Greedy-Scheduling}. Before the last big job of size $m$ is assigned, 
+all the smaller jobs of size 1 would be distributed evenly across all $m$ machines. All machines would have a workload array which looks like [1, 1, ..., 1], 
+consist of $m - 1$ jobs of size 1. After the last job is assigned, one machine would have a workload increased by $m$, thus dictating the makespan of the system, 
+which would be $(m - 1) + m = 2 * m - 1$. 
+\newline 
+Therefore, the ration bewteen \textsc{alg(i)} and \textsc{opt(i)} is $\frac{2m - 1}{m} = 2 - \frac{1}{m}$. 
+\newline
+We have thus constructed an example which makes the approximation ratio tight.
+\newline
+\textbf{Intuition for constructing our example}: The proof of the $2 - \frac{1}{m}$ ratio contains two inequalities. The first one being
+ $\frac{1}{m} \sum_{j=1}^{n}t_{j} \leq \textsc{opt(i)}$. The second being ${t_{j}}^{*} \leq \textsc{opt(i)}$. 
+ To make the approximation ratio tights, both inequalities should be equalities instead.
+
+\section*{Exercise 1.7}
+Consider the input array [3, 3, 2, 2, 2], distributed into 2 machines. 
+Since the array has already been sorted into descending order, the \textit{Greedy-Scheduling} and the \textit{Ordered-Scheduling} will 
+essentially run the same routine. 
+\newline
+Both algorithm would return the same results:
+\begin{itemize}
+  \item Machine 01: [3, 2, 2]
+  \item Machine 02: [3, 2]
+\end{itemize}
+With the resulting makespan being $3 + 2 + 2 = 7$.
+\newline
+However, the optimal solution is:
+\begin{itemize}
+  \item Machine 01: [3, 3]
+  \item Machine 02: [2, 2, 2]
+\end{itemize}
+With the optimal makespan being $2 + 2 + 2 = 3 + 3 = 6$.
+\newline
+In this case, neither algorithm returns the optimal solution. In Exercise 1.8 and 1.9, we will see how this case is constructed.
+
+\section*{Intuitive Example: \textit{Ordered-Scheduling} is (4/3)-approximation}
+Consider the input array [$2m$, $2m$, $2m-1$. $2m-1$, ... , $m+1$, $m+1$, $m$], distributed into $m$ machines. 
+Noted that the input array has already been sorted into descending order, so \textit{Ordered-Scheduling} essentially runs the same routine 
+as the \textit{Greedy-Scheduling} algorithm. There are a total of $2*[(2m)-(m+1)+1]+1=2m+1$ jobs in the input array.
+\newline
+Before the last job is scheduled, the $2m$ jobs should be distributed optimally, creating a makespan of $3m + 1$, which is also the workload of any machine. 
+\begin{itemize}
+  \item Machine 1: [$2m$, $m+1$]
+  \item Machine 2: [$2m-1$, $m+2$]
+  \newline \vdots
+  \item Machine $m-1$: [$m+2$, $2m-1$]
+  \item Machine $m$: [$m+1$, $2m$]
+\end{itemize}
+After the last job is scheduled, the makespan of the system would be $(3m+1)+m=4m+1$. 
+\newline
+We then consider the optimal solution for this input. First, calculate the lower bound for the optimal solution.
+\[
+\frac{1}{m} \sum_{j=1}^{n}{t}_{j} = \frac{1}{m}[(m)*(3m+1)+m] = \frac{1}{m}(3m^2+2m)=3m+2
+\] 
+We then provide a scheduling scheme which shows this lower bound is feasible. 
+\begin{itemize}
+  \item Machine 1: [$m+1$, $m+1$, $m$]
+  \item Machine 2: [$2m$, $m+2$]
+  \item Machine 3: [$2m-1$, $m+3$]
+  \newline \vdots
+  \item Machine $m-1$: [$m+3$, $2m-1$]
+  \item Machine $m$: [$m+2$, $2m$]
+\end{itemize}
+The approximation ratio based on this specific input is:
+\[
+\frac{\textsc{alg(i)}}{\textsc{opt(i)}}=\frac{4m+1}{3m+2} \rightarrow \frac{4}{3} , m \rightarrow \infty
+\]
+\textbf{Note}: The full proof is provided by Graham in 1969, showing the 4/3 approximation ratio both feasible and \textsc{tight}. 
+It is not included here since the proof is not part of the curriculum of this course. However the above example is quite useful to think
+of when you are trying to construct any example with scheduling problems. Fix $m=2$ and you have the example we provide for Exercise 1.7. 
+
+\section*{Exercise 1.8}
+\textit{Intuition:} Consider when the optimal solution is the same as $t_{m}+t_{m+1}$. One situation is that there is precisely one more task then there is 
+machines. In this case, one machine gets assigned two tasks (with its workload being at least $t_{m}+t_{m+1}$) while all other gets assigned one tasks. 
+\newline
+Consider the input array [$t$, $t$, $t$, $t$, $t$], with $t$ being any positive real number indicating size of a job, distributed into 4 machines. 
+The \textit{Ordered-Scheduling} algorithm returns a makespan of $2t$ with the following job distributed:
+\begin{itemize}
+  \item Machine 01: [$t$, $t$]
+  \item Machine 02: [$t$]
+  \item Machine 03: [$t$]
+  \item Machine 04: [$t$]
+\end{itemize}
+Now calculate the three lower bound:
+\begin{itemize}
+  \item The average individual job size
+  \[ \textsc{lb}_1 = \frac{1}{m}\sum_{j=1}^{n}t_j = \frac{5t}{4}
+  \]
+  \[ \frac{3}{2} \textsc{lb}_1 = \frac{3}{2} * \frac{5t}{4} = \frac{15t}{8} < \frac{16t}{8} = 2t\]
+  \item Maximum job size: $\textsc{lb}_2 = {\max}_{1 \leq j \leq n} t_{j} = t$. $\frac{3}{2} \textsc{lb}_2 = \frac{3}{2}t < 2t$
+  \item Sum of the last two jobs get scheduled: $\textsc{lb}_3 = t_{m} + t_{m+1} = t+t = 2t = \textsc{opt(i)}$.
+\end{itemize}
+\section*{Exercise 1.9}
+If there are less job than machines, than each machine gets assigned one job or less and the solution is optimal. Therefore, we could assume $n>m$ in the subsequent proof. 
+\newline
+Consider the input array be [$t_1$, $t_2$, ... $t_n$] after sorting. We therefore have the ordering $t_1 \geq t_2 \geq ... \geq t_n$.
+Let Machine $M_{i^{*}}$ be assigned the maximum workload and therefore determine the makespan. Let $t_{j^{*}}$ be the last job gets scheduled to that machine. 
+To have $t_{j^{*}}$ assigned to $M_{i^{*}}$, the machine needs to have the minimum workload right before the assignment. Since its workload at that time is the minimum across all machine, 
+it has to be less than or equal to the average workload. 
+\[ load(M_{i^{*}}) = load(M^{'}_{i^{*}}) + t_{j^{*}} \leq \frac{1}{m}[(\sum_{j=1}^{n}t_j) - t_{j^{*}}] + t_{j^{*}} = \frac{1}{m}(\sum_{j=1}^{n}t_j) + \frac{m-1}{m}t_{j^{*}}
+\]
+The first term is one of our three lower bound for the optimal solution. 
+\[ \frac{1}{m}(\sum_{j=1}^{n}t_j) \leq \textsc{opt(i)}
+\]
+For the second term, we use the fact $j^* > m$. Since jobs are sorted after assigned, we have
+\[ \frac{m-1}{m} t_{j^{*}} \leq \frac{m-1}{m} [\frac{1}{2}(t_{m} + t_{m+1})] \leq (1-\frac{1}{m})(\frac{1}{2}\textsc{opt(i)})
+\]
+Combining the two inequalities, we have our desired results of $(\frac{3}{2}-\frac{1}{2m})\textsc{opt(i)}$.
+
+\section*{Exercise 1.10}
+\subsection*{(i)} \noindent
+For $m=2$ and $n\leq4$, assume we are given the input array [$t_1$, $t_2$, $t_3$, $t_4$], sorted into descending order. For cases where we have strictly less than 4 jobs, let $t_i = 0$.
+In this way we fix $n=4$.
+Apply our algorithm. After the two jobs are assigned, we have 
+\begin{itemize}
+  \item Machine 01: [$t_1$]
+  \item Machine 02: [$t_2$]
+\end{itemize}
+Since the second machine has the smaller workload, job 3 would be assigned to that machine.
+\begin{itemize}
+  \item Machine 01: [$t_1$]
+  \item Machine 02: [$t_2$, $t_3$]
+\end{itemize}
+If Machine 01 has the smaller workload, job 4 gets assigned to Machine 01, the resulting makespan a lower bound for our optimal results. 
+\[\textsc{alg(i)} = \min(t_1+t_4, t_2+t_3) \leq t_2+t_3 = t_{m}+t_{m+1} \leq \textsc{opt(i)}
+\]
+If Machine 02 has the smaller workload, job 4 gets assigned to Machine 02, the resulting makespan equals $t_1$, which is also one of the lower bound for 
+the optimal results. Our results is optimal.
+\[t_1 =\max_{1 \leq j \leq n} t_j \leq \textsc{opt(i)}
+\]
+\subsection*{(ii)} \noindent
+Our example for Exercise 1.7 gives the $\frac{7}{6}$ approximation ratio.
+\subsection*{(iii)} \noindent
+
+\section*{Summary}
+Here are some important takeaways from this exercise:
+\begin{itemize}
+  \item What is the worst case input scenario for \textit{Greedy-Scheduling}?
+  (Note: Exercise 1.6 shows that this input would make the approximation ratio is tight).
+  \item Based on Exercise 1.7, consider the following statement: For \textbf{ANY} input, if \textit{Ordered-} \textit{Scheduling} cannot return the optimal solution, 
+  nether could \textit{Greedy-Scheduling}. Is this statement true? (Hint: try to construct an input where \textit{Ordered-Scheduling} returns a worse results than
+  \textit{Greedy-Scheduling}.)
+\end{itemize}
 \end{document}
